@@ -11,13 +11,13 @@ using iTextSharp.text.pdf;
 
 namespace GenerateQR.Processor
 {
-    public class PdfProcessor
+    public class SinglePdfProcessor
     {
         private readonly PrintData print;
         private static readonly float QrCodeSize = 80f;
         private static readonly float LogoSize = 40f;
 
-        public PdfProcessor(PrintData print)
+        public SinglePdfProcessor(PrintData print)
         {
             this.print = print;
         }

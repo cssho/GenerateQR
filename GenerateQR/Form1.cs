@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GenerateQR.Processor;
+using Newtonsoft.Json;
 
 namespace GenerateQR
 {
@@ -27,17 +28,19 @@ namespace GenerateQR
                 MessageBox.Show(this, "表示名を入力してください");
                 return;
             }
-            var pr = new PrintData()
+
+            var input = new InputData()
             {
                 DisplayName = tbDisplayName.Text,
-                Sns = await Task.WhenAll(
-                    SnsProcessorFactory.Create<TwitterData>().LoadData(tbTwitter.Text),
-                    SnsProcessorFactory.Create<FacebookData>().LoadData(tbFacebook.Text),
-                    SnsProcessorFactory.Create<InstagramData>().LoadData(tbInstagram.Text),
-                    SnsProcessorFactory.Create<AmebloData>().LoadData(tbAmeblo.Text)),
-                OutputPath = $"out_{DateTime.Now.ToString("yyyyMMddhhmm")}.pdf"
+                TwitterAccount = tbTwitter.Text,
+                FacebookAccount = tbFacebook.Text,
+                InstagramAccount = tbInstagram.Text,
+                AmebloAccount = tbAmeblo.Text
             };
-            var printer = new PdfProcessor(pr);
+            File.WriteAllText($"{input.DisplayName}.json", JsonConvert.SerializeObject(input));
+            var pr = new PrintData();
+            await pr.Load(input);
+            var printer = new SinglePdfProcessor(pr);
             try
             {
                 printer.Print();
